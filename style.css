@@ -1,0 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: black;
+  color: #00ff9c;
+  font-family: "Courier New", monospace;
+  height: 100vh;
+}
+
+#terminal {
+  padding: 20px;
+}
+
+#output {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.input-line {
+  display: flex;
+}
+
+.prompt {
+  margin-right: 8px;
+}
+
+input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #00ff9c;
+  font-family: inherit;
+  font-size: 1em;
+  flex: 1;
+}
