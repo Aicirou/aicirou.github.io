@@ -4,6 +4,9 @@ const autocompleteEl = document.getElementById("autocomplete");
 const canvas = document.getElementById("matrix-bg");
 const ctx = canvas.getContext("2d");
 
+// Check if user prefers reduced motion
+const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MATRIX RAIN BACKGROUND
 // ═══════════════════════════════════════════════════════════════════════════
@@ -32,19 +35,38 @@ function drawMatrix() {
   }
 }
 
-const matrixInterval = setInterval(drawMatrix, 35);
+// Only start matrix animation if user doesn't prefer reduced motion
+let matrixInterval = null;
+if (!prefersReducedMotion) {
+  matrixInterval = setInterval(drawMatrix, 35);
+}
 
 window.addEventListener("beforeunload", () => {
-  clearInterval(matrixInterval);
+  if (matrixInterval !== null) {
+    clearInterval(matrixInterval);
+  }
 });
 
-window.addEventListener("resize", () => {
+// Debounce function to limit resize handler calls
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+window.addEventListener("resize", debounce(() => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   // Recalculate columns and drops array on resize
   columns = Math.floor(canvas.width / fontSize);
   drops = Array(columns).fill(1);
-});
+}, 150));
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BANNER AND COMMANDS
@@ -61,7 +83,20 @@ Welcome to knullx.me - Security | Systems | Data Engineering
 Type 'help' to get started. Try 'neofetch' for system info.
 `;
 
-const neofetchArt = `
+function getUptime() {
+  // Shows time since site launch date (January 1, 2024).
+  // This is an arbitrary date chosen to represent when the site was conceptualized.
+  const siteLaunchDate = new Date(2024, 0, 1);
+  const now = new Date();
+  const diff = now - siteLaunchDate;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  return `${days} days, ${hours} hours`;
+}
+
+// Generate neofetch art dynamically to show current uptime
+function getNeofetchArt() {
+  return `
         .--.         knullx@me
        |o_o |        ─────────────────────
        |:_/ |        OS: KnullxOS v1.0.0
@@ -75,15 +110,6 @@ const neofetchArt = `
                      ─────────────────────
                      Security | Systems | Data
 `;
-
-function getUptime() {
-  // Shows time since site launch (Jan 1, 2024)
-  const siteLaunchDate = new Date(2024, 0, 1);
-  const now = new Date();
-  const diff = now - siteLaunchDate;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  return `${days} days, ${hours} hours`;
 }
 
 const commands = {
@@ -182,10 +208,10 @@ Tip: Use ↑/↓ arrows for command history, Tab for autocomplete
 └─────────────────────────────────────────────────────────────────┘
 `,
 
-  neofetch: neofetchArt,
+  neofetch: () => getNeofetchArt(),
 
   github: () => {
-    window.open("https://github.com/Aicirou", "_blank");
+    window.open("https://github.com/Aicirou", "_blank", "noopener,noreferrer");
     return "Opening GitHub profile...";
   },
 
@@ -200,9 +226,10 @@ But hey, I appreciate the creativity!
 
   matrix: () => {
     const canvas = document.getElementById("matrix-bg");
-    const wasEnabled = canvas.style.opacity !== "0";
-    canvas.style.opacity = wasEnabled ? "0" : "0.15";
-    return wasEnabled
+    // Check current state: empty string (CSS default) or "0.15" means enabled
+    const isCurrentlyEnabled = canvas.style.opacity !== "0";
+    canvas.style.opacity = isCurrentlyEnabled ? "0" : "0.15";
+    return isCurrentlyEnabled
       ? "Matrix rain disabled. Reality restored."
       : "Matrix rain enabled. Take the red pill.";
   },
@@ -292,8 +319,9 @@ No filesystems were harmed in the making of this joke.
 const commandNames = Object.keys(commands).filter((name) => !name.includes(" "));
 
 // ═══════════════════════════════════════════════════════════════════════════
-// COMMAND HISTORY
+// COMMAND HISTORY (limited to 100 entries to prevent memory issues)
 // ═══════════════════════════════════════════════════════════════════════════
+const MAX_HISTORY_SIZE = 100;
 let commandHistory = [];
 let historyIndex = -1;
 
@@ -304,6 +332,13 @@ let isTyping = false;
 const typeSpeed = 5;
 
 async function typeText(text, speed = typeSpeed) {
+  // Skip animation if user prefers reduced motion
+  if (prefersReducedMotion) {
+    output.textContent += text;
+    scrollToBottom();
+    return;
+  }
+  
   isTyping = true;
   for (const char of text) {
     output.textContent += char;
@@ -350,8 +385,9 @@ async function simulateHack() {
   for (const step of hackSteps) {
     output.textContent += "\n" + step;
     scrollToBottom();
-    // Use bounded timing (350-450ms) for smoother animation
-    await sleep(350 + Math.random() * 100);
+    // Respect prefers-reduced-motion: skip delay if user requests reduced motion
+    const delay = prefersReducedMotion ? 0 : 350 + Math.random() * 100;
+    await sleep(delay);
   }
   output.textContent += "\n";
 }
@@ -392,8 +428,11 @@ function updateAutocomplete() {
 async function processCommand(cmd) {
   if (!cmd) return;
 
-  // Add to history
+  // Add to history with size limit to prevent memory issues
   commandHistory.push(cmd);
+  if (commandHistory.length > MAX_HISTORY_SIZE) {
+    commandHistory.shift();
+  }
   historyIndex = commandHistory.length;
 
   const parts = cmd.split(" ");
@@ -467,10 +506,14 @@ input.addEventListener("keydown", async function (e) {
   // Enter to execute
   if (e.key === "Enter") {
     const cmd = input.value.trim();
-    print(`knullx@me:~$ ${cmd}`);
     input.value = "";
     autocompleteEl.textContent = "";
-    await processCommand(cmd);
+    
+    // Only print prompt and process if command is not empty
+    if (cmd) {
+      print(`knullx@me:~$ ${cmd}`);
+      await processCommand(cmd);
+    }
   }
 });
 

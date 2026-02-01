@@ -143,6 +143,12 @@ input:focus {
   50% { opacity: 0.7; }
 }
 
+/* 
+ * Utility classes for future enhancements.
+ * These classes are available for use in JavaScript when adding 
+ * colored output, styled ASCII art, loading indicators, etc.
+ */
+
 /* Highlight colors for special text */
 .highlight-green { color: #00ff9c; }
 .highlight-yellow { color: #ffff00; text-shadow: 0 0 5px #ffff00; }
