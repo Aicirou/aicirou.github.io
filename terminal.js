@@ -3,6 +3,7 @@ const input = document.getElementById("commandInput");
 const autocompleteEl = document.getElementById("autocomplete");
 const canvas = document.getElementById("matrix-bg");
 const ctx = canvas.getContext("2d");
+const terminal = document.getElementById("terminal");
 
 // Check if user prefers reduced motion (reactive to changes)
 let prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -257,7 +258,7 @@ But hey, I appreciate the creativity!
 `,
 
   matrix: () => {
-    const canvas = document.getElementById("matrix-bg");
+    // Use cached canvas variable instead of querying DOM
     // Check current state: empty string (CSS default) or "0.15" means enabled
     const isCurrentlyEnabled = canvas.style.opacity !== "0";
     canvas.style.opacity = isCurrentlyEnabled ? "0" : "0.15";
@@ -415,7 +416,6 @@ function sleep(ms) {
 }
 
 function scrollToBottom() {
-  const terminal = document.getElementById("terminal");
   terminal.scrollTop = terminal.scrollHeight;
 }
 
