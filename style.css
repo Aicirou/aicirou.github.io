@@ -159,7 +159,14 @@ a:hover {
   margin-left: 4px;
 }
 
-/* Scrollbar styling - WebKit browsers */
+/* Scrollbar styling */
+#terminal {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #00ff9c #111;
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
 #terminal::-webkit-scrollbar {
   width: 8px;
 }
@@ -175,10 +182,4 @@ a:hover {
 
 #terminal::-webkit-scrollbar-thumb:hover {
   background: #00cc7a;
-}
-
-/* Scrollbar styling - Firefox */
-#terminal {
-  scrollbar-width: thin;
-  scrollbar-color: #00ff9c #111;
 }

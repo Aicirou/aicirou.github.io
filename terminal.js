@@ -49,19 +49,19 @@ function drawMatrix() {
   }
 }
 
+// Reset canvas state (used when toggling matrix back on)
+function resetMatrixState() {
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
+  ctx.fillStyle = "rgba(0, 0, 0, 1)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 // Only start matrix animation if user doesn't prefer reduced motion
 let matrixInterval = null;
 if (!prefersReducedMotion) {
   matrixInterval = setInterval(drawMatrix, 35);
 }
-
-window.addEventListener("beforeunload", () => {
-  if (matrixInterval !== null) {
-    clearInterval(matrixInterval);
-    matrixInterval = null;
-  }
-  resizeHandler.cancel();
-});
 
 // Debounce function to limit resize handler calls
 function debounce(func, wait) {
@@ -76,6 +76,7 @@ function debounce(func, wait) {
   }
   debounced.cancel = () => {
     clearTimeout(timeout);
+    timeout = null;
   };
   return debounced;
 }
@@ -89,6 +90,15 @@ const resizeHandler = debounce(() => {
 }, 150);
 
 window.addEventListener("resize", resizeHandler);
+
+// Cleanup on page unload (defined after resizeHandler)
+window.addEventListener("beforeunload", () => {
+  if (matrixInterval !== null) {
+    clearInterval(matrixInterval);
+    matrixInterval = null;
+  }
+  resizeHandler.cancel();
+});
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BANNER AND COMMANDS
@@ -260,6 +270,8 @@ But hey, I appreciate the creativity!
       }
       return "Matrix rain disabled. Reality restored.";
     } else {
+      // Reset canvas state for clean start when re-enabling
+      resetMatrixState();
       if (matrixInterval === null && !prefersReducedMotion) {
         matrixInterval = setInterval(drawMatrix, 35);
       }
@@ -270,6 +282,11 @@ But hey, I appreciate the creativity!
   cowsay: (text) => {
     const MAX_LENGTH = 200;
     let message = text || "Moo! Try 'cowsay <message>'";
+    
+    // Reject messages with newlines (would break ASCII art layout)
+    if (message.includes("\n")) {
+      return "\n⚠️ Message cannot contain newlines.\n";
+    }
     
     // Limit message length to prevent display issues
     if (message.length > MAX_LENGTH) {
@@ -316,6 +333,7 @@ But hey, I appreciate the creativity!
     if (text && text.length > MAX_LENGTH) {
       return `\n⚠️ Text too long! Maximum ${MAX_LENGTH} characters allowed.\n`;
     }
+    // Return empty string if no text (consistent with Unix echo behavior)
     return text || "";
   },
 
@@ -463,6 +481,9 @@ function updateAutocomplete() {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // COMMAND PROCESSING
+// Note: Commands are matched by first word only. Multi-word commands like
+// "rm -rf /" work because they're defined as literal keys with spaces.
+// When adding new multi-word commands, include spaces in the command key.
 // ═══════════════════════════════════════════════════════════════════════════
 async function processCommand(cmd) {
   if (!cmd) return;
@@ -501,17 +522,28 @@ async function processCommand(cmd) {
 input.addEventListener("input", updateAutocomplete);
 
 input.addEventListener("keydown", async function (e) {
-  if (isTyping) {
+  // Allow navigation keys even while typing animation is running
+  const nonMutatingKeys = [
+    "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+    "Tab", "Shift", "Control", "Alt", "Meta", "CapsLock", "Escape"
+  ];
+  
+  if (isTyping && !nonMutatingKeys.includes(e.key)) {
     e.preventDefault();
     return;
   }
 
-  // Tab for autocomplete
+  // Tab for autocomplete - preserve any arguments after the command
   if (e.key === "Tab") {
     e.preventDefault();
-    const completion = getAutocomplete(input.value.trim().split(" ")[0]);
+    const currentValue = input.value;
+    const parts = currentValue.split(" ");
+    const firstWord = parts[0] || "";
+    const completion = getAutocomplete(firstWord);
     if (completion) {
-      input.value += completion;
+      const completedFirstWord = firstWord + completion;
+      const rest = parts.slice(1).join(" ");
+      input.value = rest ? `${completedFirstWord} ${rest}` : completedFirstWord;
       autocompleteEl.textContent = "";
     }
     return;
