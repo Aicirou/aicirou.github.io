@@ -13,8 +13,8 @@ canvas.height = window.innerHeight;
 const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const charArray = chars.split("");
 const fontSize = 14;
-const columns = canvas.width / fontSize;
-const drops = Array(Math.floor(columns)).fill(1);
+let columns = Math.floor(canvas.width / fontSize);
+let drops = Array(columns).fill(1);
 
 function drawMatrix() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -32,11 +32,18 @@ function drawMatrix() {
   }
 }
 
-setInterval(drawMatrix, 35);
+const matrixInterval = setInterval(drawMatrix, 35);
+
+window.addEventListener("beforeunload", () => {
+  clearInterval(matrixInterval);
+});
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  // Recalculate columns and drops array on resize
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -70,9 +77,10 @@ const neofetchArt = `
 `;
 
 function getUptime() {
-  const start = new Date(2024, 0, 1);
+  // Shows time since site launch (Jan 1, 2024)
+  const siteLaunchDate = new Date(2024, 0, 1);
   const now = new Date();
-  const diff = now - start;
+  const diff = now - siteLaunchDate;
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   return `${days} days, ${hours} hours`;
@@ -168,9 +176,8 @@ Tip: Use ↑/↓ arrows for command history, Tab for autocomplete
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  🐙  GitHub   :  https://github.com/Aicirou                     │
-│  🐦  Twitter  :  https://twitter.com/                           │
 │                                                                 │
-│  Type 'github' or 'twitter' to open directly                    │
+│  Type 'github' to open directly                                 │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 `,
@@ -180,11 +187,6 @@ Tip: Use ↑/↓ arrows for command history, Tab for autocomplete
   github: () => {
     window.open("https://github.com/Aicirou", "_blank");
     return "Opening GitHub profile...";
-  },
-
-  twitter: () => {
-    window.open("https://twitter.com/", "_blank");
-    return "Opening Twitter...";
   },
 
   sudo: `
@@ -198,8 +200,9 @@ But hey, I appreciate the creativity!
 
   matrix: () => {
     const canvas = document.getElementById("matrix-bg");
-    canvas.style.opacity = canvas.style.opacity === "0" ? "0.15" : "0";
-    return canvas.style.opacity === "0" 
+    const wasEnabled = canvas.style.opacity !== "0";
+    canvas.style.opacity = wasEnabled ? "0" : "0.15";
+    return wasEnabled
       ? "Matrix rain disabled. Reality restored."
       : "Matrix rain enabled. Take the red pill.";
   },
@@ -274,8 +277,8 @@ Just someone who loves technology, security, and building cool things.
 Thanks for exploring this interactive portfolio!
 `,
 
-  exit: () => {
-    typeText("\nLogout...\n\nConnection closed.\n\nJust kidding! You can't escape that easily. 😄\n");
+  exit: async () => {
+    await typeText("\nLogout...\n\nConnection closed.\n\nJust kidding! You can't escape that easily. 😄\n");
     return "";
   },
 
@@ -285,8 +288,8 @@ No filesystems were harmed in the making of this joke.
 `,
 };
 
-// List of command names for autocomplete
-const commandNames = Object.keys(commands);
+// List of command names for autocomplete (filter out multi-word commands)
+const commandNames = Object.keys(commands).filter((name) => !name.includes(" "));
 
 // ═══════════════════════════════════════════════════════════════════════════
 // COMMAND HISTORY
@@ -347,7 +350,8 @@ async function simulateHack() {
   for (const step of hackSteps) {
     output.textContent += "\n" + step;
     scrollToBottom();
-    await sleep(300 + Math.random() * 400);
+    // Use bounded timing (350-450ms) for smoother animation
+    await sleep(350 + Math.random() * 100);
   }
   output.textContent += "\n";
 }
@@ -430,7 +434,7 @@ input.addEventListener("keydown", async function (e) {
     const completion = getAutocomplete(input.value.trim().split(" ")[0]);
     if (completion) {
       input.value += completion;
-      updateAutocomplete();
+      autocompleteEl.textContent = "";
     }
     return;
   }
@@ -470,8 +474,17 @@ input.addEventListener("keydown", async function (e) {
   }
 });
 
-// Keep focus on input
-document.addEventListener("click", () => input.focus());
+// Keep focus on input, but allow text selection in output area
+document.addEventListener("click", (event) => {
+  if (!output || !event.target) {
+    input.focus();
+    return;
+  }
+  // Do not steal focus when clicking inside the output element
+  if (!output.contains(event.target)) {
+    input.focus();
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════════════════
 // INITIALIZATION
