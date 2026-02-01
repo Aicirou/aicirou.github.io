@@ -10,10 +10,10 @@
 <body>
   <canvas id="matrix-bg" aria-hidden="true"></canvas>
   <div id="terminal">
-    <pre id="output"></pre>
+    <pre id="output" role="log" aria-live="polite"></pre>
     <div class="input-line">
       <span class="prompt">knullx@me:~$</span>
-      <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+      <input id="commandInput" autocomplete="off" spellcheck="false" autofocus aria-label="Terminal command input" />
       <span id="autocomplete"></span>
     </div>
   </div>

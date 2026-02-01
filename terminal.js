@@ -4,8 +4,22 @@ const autocompleteEl = document.getElementById("autocomplete");
 const canvas = document.getElementById("matrix-bg");
 const ctx = canvas.getContext("2d");
 
-// Check if user prefers reduced motion
-const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Check if user prefers reduced motion (reactive to changes)
+let prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Listen for changes to motion preferences
+if (window.matchMedia) {
+  window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", (e) => {
+    prefersReducedMotion = e.matches;
+    // Stop or start matrix animation based on new preference
+    if (prefersReducedMotion && matrixInterval !== null) {
+      clearInterval(matrixInterval);
+      matrixInterval = null;
+    } else if (!prefersReducedMotion && matrixInterval === null && canvas.style.opacity !== "0") {
+      matrixInterval = setInterval(drawMatrix, 35);
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MATRIX RAIN BACKGROUND
@@ -44,29 +58,37 @@ if (!prefersReducedMotion) {
 window.addEventListener("beforeunload", () => {
   if (matrixInterval !== null) {
     clearInterval(matrixInterval);
+    matrixInterval = null;
   }
+  resizeHandler.cancel();
 });
 
 // Debounce function to limit resize handler calls
 function debounce(func, wait) {
   let timeout;
-  return function executedFunction(...args) {
+  function debounced(...args) {
     const later = () => {
       clearTimeout(timeout);
       func(...args);
     };
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
+  }
+  debounced.cancel = () => {
+    clearTimeout(timeout);
   };
+  return debounced;
 }
 
-window.addEventListener("resize", debounce(() => {
+const resizeHandler = debounce(() => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   // Recalculate columns and drops array on resize
   columns = Math.floor(canvas.width / fontSize);
   drops = Array(columns).fill(1);
-}, 150));
+}, 150);
+
+window.addEventListener("resize", resizeHandler);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BANNER AND COMMANDS
@@ -229,13 +251,31 @@ But hey, I appreciate the creativity!
     // Check current state: empty string (CSS default) or "0.15" means enabled
     const isCurrentlyEnabled = canvas.style.opacity !== "0";
     canvas.style.opacity = isCurrentlyEnabled ? "0" : "0.15";
-    return isCurrentlyEnabled
-      ? "Matrix rain disabled. Reality restored."
-      : "Matrix rain enabled. Take the red pill.";
+    
+    // Stop/start animation to save CPU when disabled
+    if (isCurrentlyEnabled) {
+      if (matrixInterval !== null) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+      }
+      return "Matrix rain disabled. Reality restored.";
+    } else {
+      if (matrixInterval === null && !prefersReducedMotion) {
+        matrixInterval = setInterval(drawMatrix, 35);
+      }
+      return "Matrix rain enabled. Take the red pill.";
+    }
   },
 
   cowsay: (text) => {
-    const message = text || "Moo! Try 'cowsay <message>'";
+    const MAX_LENGTH = 200;
+    let message = text || "Moo! Try 'cowsay <message>'";
+    
+    // Limit message length to prevent display issues
+    if (message.length > MAX_LENGTH) {
+      return `\n⚠️ Message too long! Maximum ${MAX_LENGTH} characters allowed.\n`;
+    }
+    
     const border = "_".repeat(message.length + 2);
     return `
  ${border}
@@ -272,6 +312,10 @@ But hey, I appreciate the creativity!
   },
 
   echo: (text) => {
+    const MAX_LENGTH = 500;
+    if (text && text.length > MAX_LENGTH) {
+      return `\n⚠️ Text too long! Maximum ${MAX_LENGTH} characters allowed.\n`;
+    }
     return text || "";
   },
 
@@ -396,11 +440,6 @@ async function simulateHack() {
 // PRINT FUNCTIONS
 // ═══════════════════════════════════════════════════════════════════════════
 function print(text) {
-  output.textContent += text + "\n";
-  scrollToBottom();
-}
-
-function printInstant(text) {
   output.textContent += text + "\n";
   scrollToBottom();
 }

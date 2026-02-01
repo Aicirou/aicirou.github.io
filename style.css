@@ -24,7 +24,7 @@ body {
   pointer-events: none;
 }
 
-/* CRT scanline effect */
+/* CRT scanline effect - z-index 1000 places scanlines over content for authentic CRT look */
 body::before {
   content: "";
   position: fixed;
@@ -89,10 +89,6 @@ body::after {
     opacity: 0;
   }
   
-  .hack-text {
-    animation: none;
-  }
-  
   input:focus {
     animation: none;
   }
@@ -134,32 +130,14 @@ input {
   text-shadow: 0 0 5px #00ff9c;
 }
 
-/* Blinking cursor */
+/* Blinking cursor - only animate caret color, not entire input */
 input:focus {
   animation: cursor-blink 1s step-end infinite;
 }
 
 @keyframes cursor-blink {
-  50% { opacity: 0.7; }
-}
-
-/* 
- * Utility classes for future enhancements.
- * These classes are available for use in JavaScript when adding 
- * colored output, styled ASCII art, loading indicators, etc.
- */
-
-/* Highlight colors for special text */
-.highlight-green { color: #00ff9c; }
-.highlight-yellow { color: #ffff00; text-shadow: 0 0 5px #ffff00; }
-.highlight-red { color: #ff3333; text-shadow: 0 0 5px #ff3333; }
-.highlight-cyan { color: #00ffff; text-shadow: 0 0 5px #00ffff; }
-.highlight-magenta { color: #ff00ff; text-shadow: 0 0 5px #ff00ff; }
-
-/* ASCII art glow */
-.ascii-art {
-  color: #00ff9c;
-  text-shadow: 0 0 10px #00ff9c, 0 0 20px #00ff9c, 0 0 30px #00ff9c;
+  0%, 100% { caret-color: #00ff9c; }
+  50% { caret-color: transparent; }
 }
 
 /* Link styling */
@@ -181,31 +159,7 @@ a:hover {
   margin-left: 4px;
 }
 
-/* Loading animation */
-.loading::after {
-  content: '';
-  animation: loading 1s steps(4) infinite;
-}
-
-@keyframes loading {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
-}
-
-/* Hack effect text */
-.hack-text {
-  color: #00ff00;
-  animation: hack-flicker 0.1s infinite;
-}
-
-@keyframes hack-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-
-/* Scrollbar styling */
+/* Scrollbar styling - WebKit browsers */
 #terminal::-webkit-scrollbar {
   width: 8px;
 }
@@ -221,4 +175,10 @@ a:hover {
 
 #terminal::-webkit-scrollbar-thumb:hover {
   background: #00cc7a;
+}
+
+/* Scrollbar styling - Firefox */
+#terminal {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff9c #111;
 }
