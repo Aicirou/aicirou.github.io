@@ -91,6 +91,11 @@ const resizeHandler = debounce(() => {
   // Recalculate columns and drops array on resize
   columns = Math.floor(canvas.width / fontSize);
   drops = Array(columns).fill(1);
+  // Clear canvas when resizing while matrix is disabled to prevent artifacts
+  if (!matrixEnabled) {
+    ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 }, 150);
 
 window.addEventListener("resize", resizeHandler);
@@ -120,8 +125,8 @@ Type 'help' to get started. Try 'neofetch' for system info.
 `;
 
 function getUptime() {
-  // Shows time since site launch date (January 1, 2024).
-  // This is an arbitrary date chosen to represent when the site was conceptualized.
+  // Shows a fictional uptime starting from an arbitrary placeholder date (January 1, 2024).
+  // This is a demo value and does not necessarily reflect the actual site launch date.
   const siteLaunchDate = new Date(2024, 0, 1);
   const now = new Date();
   const diff = now - siteLaunchDate;
@@ -478,8 +483,16 @@ function getAutocomplete(partial) {
   return "";
 }
 
+// Cache the last base word used for autocomplete to avoid unnecessary updates
+let lastAutocompleteBase = "";
+
 function updateAutocomplete() {
   const value = input.value.trim().split(" ")[0];
+  // If the base command hasn't changed, autocomplete would be the same; skip update
+  if (value === lastAutocompleteBase) {
+    return;
+  }
+  lastAutocompleteBase = value;
   autocompleteEl.textContent = getAutocomplete(value);
 }
 
@@ -540,9 +553,10 @@ input.addEventListener("input", updateAutocomplete);
 
 input.addEventListener("keydown", async function (e) {
   // Allow navigation keys even while typing animation is running
+  // (Escape excluded - could be used to cancel, but currently has no handler)
   const nonMutatingKeys = [
     "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
-    "Tab", "Shift", "Control", "Alt", "Meta", "CapsLock", "Escape"
+    "Tab", "Shift", "Control", "Alt", "Meta", "CapsLock"
   ];
   
   if (isTyping && !nonMutatingKeys.includes(e.key)) {
@@ -611,8 +625,8 @@ document.addEventListener("click", (event) => {
     input.focus();
     return;
   }
-  // Do not steal focus when clicking inside the output element
-  if (!output.contains(event.target)) {
+  // Do not steal focus when clicking inside the output element or on the input itself
+  if (event.target !== input && !output.contains(event.target)) {
     input.focus();
   }
 });
