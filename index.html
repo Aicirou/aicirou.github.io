@@ -2,16 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>knullx.me</title>
+  <title>knullx.me | Terminal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="knullx.me - Security | Systems | Data Engineering - An interactive terminal portfolio" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <canvas id="matrix-bg"></canvas>
   <div id="terminal">
     <pre id="output"></pre>
     <div class="input-line">
       <span class="prompt">knullx@me:~$</span>
-      <input id="commandInput" autofocus />
+      <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+      <span id="autocomplete"></span>
     </div>
   </div>
 
