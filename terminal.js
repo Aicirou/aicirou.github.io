@@ -5,6 +5,9 @@ const canvas = document.getElementById("matrix-bg");
 const ctx = canvas.getContext("2d");
 const terminal = document.getElementById("terminal");
 
+// Explicit flag to track matrix enabled state (more reliable than checking inline styles)
+let matrixEnabled = true;
+
 // Check if user prefers reduced motion (reactive to changes)
 let prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -16,7 +19,7 @@ if (window.matchMedia) {
     if (prefersReducedMotion && matrixInterval !== null) {
       clearInterval(matrixInterval);
       matrixInterval = null;
-    } else if (!prefersReducedMotion && matrixInterval === null && canvas.style.opacity !== "0") {
+    } else if (!prefersReducedMotion && matrixInterval === null && matrixEnabled) {
       matrixInterval = setInterval(drawMatrix, 35);
     }
   });
@@ -258,19 +261,20 @@ But hey, I appreciate the creativity!
 `,
 
   matrix: () => {
-    // Use cached canvas variable instead of querying DOM
-    // Check current state: empty string (CSS default) or "0.15" means enabled
-    const isCurrentlyEnabled = canvas.style.opacity !== "0";
-    canvas.style.opacity = isCurrentlyEnabled ? "0" : "0.15";
-    
-    // Stop/start animation to save CPU when disabled
-    if (isCurrentlyEnabled) {
+    // Use explicit boolean flag instead of checking inline styles (more reliable)
+    if (matrixEnabled) {
+      // Disable matrix
+      matrixEnabled = false;
+      canvas.style.opacity = "0";
       if (matrixInterval !== null) {
         clearInterval(matrixInterval);
         matrixInterval = null;
       }
       return "Matrix rain disabled. Reality restored.";
     } else {
+      // Enable matrix
+      matrixEnabled = true;
+      canvas.style.opacity = "0.15";
       // Reset canvas state for clean start when re-enabling
       resetMatrixState();
       if (matrixInterval === null && !prefersReducedMotion) {
@@ -481,10 +485,21 @@ function updateAutocomplete() {
 
 // ═══════════════════════════════════════════════════════════════════════════
 // COMMAND PROCESSING
-// Note: Commands are matched by first word only. Multi-word commands like
-// "rm -rf /" work because they're defined as literal keys with spaces.
-// When adding new multi-word commands, include spaces in the command key.
+// Multi-word commands like "rm -rf /" are checked first by exact match.
+// Single-word commands are parsed by splitting on spaces.
 // ═══════════════════════════════════════════════════════════════════════════
+
+// Helper to execute a command handler and print result
+async function executeHandler(handler, args = "") {
+  if (typeof handler === "function") {
+    const result = await handler(args);
+    if (result) print(result);
+  } else if (handler) {
+    print(handler);
+  }
+  return !!handler;
+}
+
 async function processCommand(cmd) {
   if (!cmd) return;
 
@@ -494,6 +509,13 @@ async function processCommand(cmd) {
     commandHistory.shift();
   }
   historyIndex = commandHistory.length;
+
+  // Check for exact multi-word command match first (e.g., "rm -rf /")
+  const exactHandler = commands[cmd.toLowerCase()];
+  if (exactHandler) {
+    await executeHandler(exactHandler);
+    return;
+  }
 
   const parts = cmd.split(" ");
   const command = parts[0].toLowerCase();
@@ -506,12 +528,7 @@ async function processCommand(cmd) {
 
   const handler = commands[command];
   
-  if (typeof handler === "function") {
-    const result = await handler(args);
-    if (result) print(result);
-  } else if (handler) {
-    print(handler);
-  } else {
+  if (!await executeHandler(handler, args)) {
     print(`\nCommand not found: ${cmd}\nType 'help' for available commands.\n`);
   }
 }
