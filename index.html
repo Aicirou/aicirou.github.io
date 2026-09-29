@@ -1,24 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>knullx.me | Terminal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="knullx.me - Security | Systems | Data Engineering - An interactive terminal portfolio" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <canvas id="matrix-bg" aria-hidden="true"></canvas>
-  <div id="terminal">
-    <!-- aria-live="off" prevents screen readers from announcing every character during typewriter effect -->
-    <pre id="output" role="log" aria-live="off"></pre>
-    <div class="input-line">
-      <span class="prompt">knullx@me:~$</span>
-      <input id="commandInput" autocomplete="off" spellcheck="false" autofocus aria-label="Terminal command input" maxlength="1000" />
-      <span id="autocomplete"></span>
-    </div>
-  </div>
 
-  <script src="terminal.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajay Kumar Meena — Portfolio</title>
+    <meta name="description"
+        content="Ajay Kumar Meena is a Software Developer specializing in backend technologies, microservices architecture, and cloud platforms.">
+    <link rel="canonical" href="https://knullx.me/">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+
+    <!-- Open Graph & Social Metadata -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://knullx.me/">
+    <meta property="og:title" content="Ajay Kumar Meena — Portfolio">
+    <meta property="og:description"
+        content="Ajay Kumar Meena is a Software Developer specializing in backend technologies, microservices architecture, and cloud platforms.">
+    <meta property="og:site_name" content="Ajay Kumar Meena">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Ajay Kumar Meena — Portfolio">
+    <meta name="twitter:description"
+        content="Ajay Kumar Meena is a Software Developer specializing in backend technologies, microservices architecture, and cloud platforms.">
+
+    <!-- Adaptive Minimalist SVG Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3Etext%7Bfill:%23111827;font-family:monospace;font-weight:bold;font-size:22px%7D@media(prefers-color-scheme:dark)%7Btext%7Bfill:%23a3e635%7D%7D%3C/style%3E%3Ctext x='2' y='24'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+    <!-- Preload fonts for instant, crisp rendering -->
+    <link rel="preload" href="fonts/0xPropo-VariableVF.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/0xProto-Regular.woff2" as="font" type="font/woff2" crossorigin>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="page">
+        <header class="header-container">
+            <div>
+                <h1><a class="header-name" href="/">Ajay Kumar Meena</a></h1>
+                <p class="header-role">Software Engineer</p>
+            </div>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">theme</button>
+        </header>
+
+        <section id="about">
+            <h2>about</h2>
+            <div class="prose">
+                <p>I hold a Dual Degree (B.Tech + M.Tech) from <a class="text-link" href="https://www.iitkgp.ac.in/"
+                        target="_blank" rel="noopener noreferrer">IIT Kharagpur</a>. I specialize in backend systems,
+                    microservices architecture, and cloud infrastructure.</p>
+                <p>Currently expanding into AI engineering — engineering at the intersection of scalable distributed
+                    backends and intelligent systems. I believe in software that is clean, high-performance, and built
+                    with deliberate engineering craft.</p>
+            </div>
+            <ul class="links">
+                <li><a class="text-link" href="https://github.com/Aicirou" target="_blank"
+                        rel="noopener noreferrer">GitHub <span class="arrow">→</span></a></li>
+                <li><a class="text-link" href="https://linkedin.com/in/akm808-iitkgp" target="_blank"
+                        rel="noopener noreferrer">LinkedIn <span class="arrow">→</span></a></li>
+                <li><a class="text-link" href="mailto:akm808.iitkgp@gmail.com">Email <span class="arrow">→</span></a>
+                </li>
+                <li><a class="text-link" href="https://knullx.me/cv" target="_blank" rel="noopener noreferrer">CV <span
+                            class="arrow">→</span></a></li>
+            </ul>
+        </section>
+
+        <section id="experience">
+            <h2>experience</h2>
+            <ul class="entries">
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">Software Engineer, Ramfincorp</span>
+                        <time class="entry-meta">2025 — present</time>
+                    </div>
+                    <ul class="entry-list">
+                        <li>Migrated core Loan Origination System from legacy PHP to Node.js, boosting throughput by
+                            40%.</li>
+                        <li>Engineered Kafka-driven event payment pipelines integrating Razorpay, driving 32% revenue
+                            growth.</li>
+                        <li>Integrated third-party KYC verification APIs, reducing user drop-offs by 25%.</li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">Lead Software Developer, SENDFAST</span>
+                        <time class="entry-meta">2023 — 2024</time>
+                    </div>
+                    <ul class="entry-list">
+                        <li>Architected modular Node.js backend using Apollo Server, GraphQL, and Prisma ORM.</li>
+                        <li>Achieved a 60% latency reduction through aggressive database indexing and server-side
+                            caching.</li>
+                        <li>Built and deployed Docker microservices on AWS infrastructure.</li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">SDE Intern, eVIDYA</span>
+                        <time class="entry-meta">2022</time>
+                    </div>
+                    <ul class="entry-list">
+                        <li>Designed real-time whiteboard synchronization using WebSockets with fine-grained role-based
+                            access control, increasing multi-user collaboration efficiency by 50%.</li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">Problem Curator, AlgoZenith</span>
+                        <time class="entry-meta">2021 — 2022</time>
+                    </div>
+                    <ul class="entry-list">
+                        <li>Authored 35+ competitive programming and algorithmic challenges, improving active contest
+                            participation by 20%.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="projects">
+            <h2>projects</h2>
+            <ul class="entries">
+                <li>
+                    <div class="entry-header">
+                        <a class="entry-title text-link" href="https://github.com/Aicirou/goindex-theme-acrou"
+                            target="_blank" rel="noopener noreferrer">Google Drive Directory Index</a>
+                        <time class="entry-meta">2020 — 2021</time>
+                    </div>
+                    <ul class="entry-list">
+                        <li>High-speed serverless web index powered by Cloudflare Workers and Google Drive APIs.</li>
+                        <li>Implemented edge caching, instant PDF document previews, custom media players, and secure
+                            OAuth access.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="skills">
+            <h2>skills</h2>
+            <div class="skills-grid">
+                <div class="skill-category-card">
+                    <div class="skill-category-header">
+                        <span class="skill-category-title">Languages</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">C/C++</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">Shell</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <div class="skill-category-header">
+                        <span class="skill-category-title">Frameworks &amp; Libraries</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Node.js</span>
+                        <span class="skill-tag">Next.js</span>
+                        <span class="skill-tag">FastAPI</span>
+                        <span class="skill-tag">GraphQL</span>
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">RESTful APIs</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <div class="skill-category-header">
+                        <span class="skill-category-title">Infrastructure &amp; DevOps</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Apache Kafka</span>
+                        <span class="skill-tag">Jenkins</span>
+                        <span class="skill-tag">GitHub Actions</span>
+                        <span class="skill-tag">Nginx</span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <div class="skill-category-header">
+                        <span class="skill-category-title">Databases &amp; ORMs</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">Redis</span>
+                        <span class="skill-tag">Prisma</span>
+                        <span class="skill-tag">Drizzle</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="education">
+            <h2>education &amp; certifications</h2>
+            <ul class="entries compact">
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">Indian Institute of Technology, Kharagpur</span>
+                        <span class="entry-meta">2018 — 2023</span>
+                    </div>
+                    <p>Dual Degree (B.Tech + M.Tech) · CGPA: 7.21 / 10.0</p>
+                </li>
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">AWS Certified Solutions Architect</span>
+                        <span class="entry-meta">Associate</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="entry-header">
+                        <span class="entry-title">PortSwigger Web Security Academy</span>
+                        <span class="entry-meta">Completed</span>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <footer>
+            <small>© 2026 Ajay Kumar Meena · Inspired by msaktype</small>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
 </body>
+
 </html>

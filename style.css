@@ -1,185 +1,568 @@
-* {
-  box-sizing: border-box;
+/*
+ * Inspired by msaktype.com
+ * Typography: 0xPropo Variable Font (Proportional) & 0xProto (Monospace)
+ * Philosophy: Steady rhythm, disciplined font sizes, thoughtful whitespace, unified theme tokens.
+ */
+
+@font-face {
+    font-family: '0xPropo';
+    src: url('fonts/0xPropo-VariableVF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '0xProto';
+    src: url('fonts/0xProto-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '0xProto';
+    src: url('fonts/0xProto-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: '0xProto';
+    src: url('fonts/0xProto-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+:root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --text: #111827;
+    --text-secondary: #374151;
+    --text-tertiary: #6b7280;
+    --border: #e5e7eb;
+    --border-hover: #d1d5db;
+    --border-light: #f3f4f6;
+
+    /* Unified hover background across all sections (projects, education, experience, skills) */
+    --hover-bg: rgba(0, 0, 0, 0.035);
+
+    /* msaktype signature link colors: Royal Blue in light mode */
+    --link: #1d4ed8;
+    --link-hover-bg: #1d4ed8;
+    --link-hover-text: #ffffff;
+
+    /* Skills category card base */
+    --card-bg: rgba(0, 0, 0, 0.015);
+
+    /* Skill tags: White on black on hover (monochrome inversion) */
+    --tag-bg: #ffffff;
+    --tag-border: #e5e7eb;
+    --tag-text: #1f2937;
+    --tag-hover-bg: #111827;
+    --tag-hover-border: #111827;
+    --tag-hover-text: #ffffff;
+    --tag-hover-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+    --sans: '0xPropo', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --mono: '0xProto', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #09090b;
+        --text: #f9fafb;
+        --text-secondary: #d1d5db;
+        --text-tertiary: #9ca3af;
+        --border: #27272a;
+        --border-hover: #3f3f46;
+        --border-light: #18181b;
+
+        /* Unified hover background across all sections in dark mode: crisp, luminous, and consistent */
+        --hover-bg: rgba(255, 255, 255, 0.055);
+
+        /* msaktype signature link colors: Electric Lime in dark mode */
+        --link: #a3e635;
+        --link-hover-bg: #a3e635;
+        --link-hover-text: #09090b;
+
+        /* Skills category card base */
+        --card-bg: rgba(255, 255, 255, 0.02);
+
+        /* Skill tags: White background with dark text on hover (monochrome inversion matching light mode) */
+        --tag-bg: #18181b;
+        --tag-border: #27272a;
+        --tag-text: #e5e7eb;
+        --tag-hover-bg: #ffffff;
+        --tag-hover-border: #ffffff;
+        --tag-hover-text: #09090b;
+        --tag-hover-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+    }
+}
+
+html[data-theme="light"],
+body[data-theme="light"] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --text: #111827;
+    --text-secondary: #374151;
+    --text-tertiary: #6b7280;
+    --border: #e5e7eb;
+    --border-hover: #d1d5db;
+    --border-light: #f3f4f6;
+
+    --hover-bg: rgba(0, 0, 0, 0.035);
+
+    --link: #1d4ed8;
+    --link-hover-bg: #1d4ed8;
+    --link-hover-text: #ffffff;
+
+    --card-bg: rgba(0, 0, 0, 0.015);
+
+    --tag-bg: #ffffff;
+    --tag-border: #e5e7eb;
+    --tag-text: #1f2937;
+    --tag-hover-bg: #111827;
+    --tag-hover-border: #111827;
+    --tag-hover-text: #ffffff;
+    --tag-hover-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="dark"],
+body[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #09090b;
+    --text: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --border: #27272a;
+    --border-hover: #3f3f46;
+    --border-light: #18181b;
+
+    --hover-bg: rgba(255, 255, 255, 0.055);
+
+    --link: #a3e635;
+    --link-hover-bg: #a3e635;
+    --link-hover-text: #09090b;
+
+    --card-bg: rgba(255, 255, 255, 0.02);
+
+    --tag-bg: #18181b;
+    --tag-border: #27272a;
+    --tag-text: #e5e7eb;
+    --tag-hover-bg: #ffffff;
+    --tag-hover-border: #ffffff;
+    --tag-hover-text: #09090b;
+    --tag-hover-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Reset ─── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
 }
 
 body {
-  margin: 0;
-  background: #0a0a0a;
-  color: #00ff9c;
-  font-family: "Courier New", monospace;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.85;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    background-color: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Matrix rain canvas */
-#matrix-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.15;
-  pointer-events: none;
+::selection {
+    background: var(--link);
+    color: var(--link-hover-text);
 }
 
-/* CRT scanline effect - z-index 1000 places scanlines over content for authentic CRT look */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0.15) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-  pointer-events: none;
-  z-index: 1000;
+:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 3px;
 }
 
-/* CRT flicker effect */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(18, 16, 16, 0.1);
-  opacity: 0;
-  z-index: 999;
-  pointer-events: none;
-  animation: flicker 0.15s infinite;
+/* ─── Page Container ─── */
+.page {
+    max-width: 42rem;
+    /* 672px max-w-2xl like msaktype */
+    margin-inline: auto;
+    padding: 6rem 1.5rem 8rem;
 }
 
-@keyframes flicker {
-  0% { opacity: 0.3; }
-  5% { opacity: 0.4; }
-  10% { opacity: 0.2; }
-  15% { opacity: 0.9; }
-  20% { opacity: 0.2; }
-  25% { opacity: 0.8; }
-  30% { opacity: 0.6; }
-  35% { opacity: 0.7; }
-  40% { opacity: 0.3; }
-  45% { opacity: 0.8; }
-  50% { opacity: 1; }
-  55% { opacity: 0.1; }
-  60% { opacity: 0.2; }
-  65% { opacity: 0.7; }
-  70% { opacity: 0.5; }
-  75% { opacity: 0.4; }
-  80% { opacity: 0.7; }
-  85% { opacity: 0.7; }
-  90% { opacity: 0.7; }
-  95% { opacity: 0.4; }
-  100% { opacity: 0.2; }
+/* ─── Header ─── */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 5.5rem;
 }
 
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  body::after {
-    animation: none;
-    opacity: 0;
-  }
-  
-  input:focus {
-    animation: none;
-  }
+header h1 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
 }
 
-#terminal {
-  padding: 20px;
-  position: relative;
-  z-index: 1;
-  height: 100vh;
-  overflow-y: auto;
-  text-shadow: 0 0 5px #00ff9c, 0 0 10px #00ff9c;
+.header-name {
+    color: var(--text);
+    text-decoration: none;
+    transition: opacity 0.15s ease;
 }
 
-#output {
-  white-space: pre-wrap;
-  line-height: 1.5;
+.header-name:hover {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
-.input-line {
-  display: flex;
-  align-items: center;
+.header-role {
+    font-size: 0.95rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+    margin-top: 0.35rem;
+    letter-spacing: -0.01em;
 }
 
-.prompt {
-  margin-right: 8px;
-  text-shadow: 0 0 8px #00ff9c, 0 0 15px #00ff9c;
+.theme-toggle {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.25rem 0.55rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
 }
 
-input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #00ff9c;
-  font-family: inherit;
-  font-size: 1em;
-  flex: 1;
-  caret-color: #00ff9c;
-  text-shadow: 0 0 5px #00ff9c;
+.theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--border-hover);
+    background: var(--hover-bg);
 }
 
-/* Blinking cursor - only animate caret color, not entire input */
-input:focus {
-  animation: cursor-blink 1s step-end infinite;
+/* ─── Section Rhythm ─── */
+section {
+    margin-top: 5.5rem;
 }
 
-@keyframes cursor-blink {
-  0%, 100% { caret-color: #00ff9c; }
-  50% { caret-color: transparent; }
+/* Iconic msaktype section header with horizontal dash */
+section>h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    /* Clean integer height (24px) ensures pixel-perfect vertical centering */
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-/* Link styling */
-a {
-  color: #00ffff;
-  text-decoration: none;
-  text-shadow: 0 0 5px #00ffff;
+@media (min-width: 768px) {
+    section>h2 {
+        margin-left: -3rem;
+    }
+
+    section>h2::before {
+        content: '';
+        width: 2rem;
+        height: 1.5px;
+        background-color: currentColor;
+        flex-shrink: 0;
+    }
 }
 
-a:hover {
-  text-decoration: underline;
-  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+@media (max-width: 767px) {
+    section>h2::before {
+        content: '';
+        width: 1.25rem;
+        height: 1.5px;
+        background-color: currentColor;
+        flex-shrink: 0;
+    }
 }
 
-/* Autocomplete suggestions */
-#autocomplete {
-  color: #666;
-  font-style: italic;
-  margin-left: 4px;
+/* ─── Prose ─── */
+.prose p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.85;
+    margin-top: 1rem;
+    text-wrap: pretty;
 }
 
-/* Scrollbar styling */
-#terminal {
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #00ff9c #111;
+.prose p:first-child {
+    margin-top: 0;
 }
 
-/* WebKit browsers (Chrome, Safari, Edge) */
-#terminal::-webkit-scrollbar {
-  width: 8px;
+/* ─── msaktype Signature Text Links ─── */
+.text-link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2.5px;
+    text-decoration-thickness: 1px;
+    display: inline-block;
+    padding: 0.05rem 0.25rem;
+    margin: -0.05rem -0.25rem;
+    border-radius: 2px;
+    transition: color 0.12s ease-out, background-color 0.12s ease-out;
 }
 
-#terminal::-webkit-scrollbar-track {
-  background: #111;
+.text-link:hover {
+    background-color: var(--link-hover-bg);
+    color: var(--link-hover-text);
+    text-decoration: none;
 }
 
-#terminal::-webkit-scrollbar-thumb {
-  background: #00ff9c;
-  border-radius: 4px;
+/* ─── Social Links List ─── */
+.links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 3.5rem;
 }
 
-#terminal::-webkit-scrollbar-thumb:hover {
-  background: #00cc7a;
+.links .arrow {
+    display: inline-block;
+    font-size: 0.9em;
+    margin-left: 0.15rem;
+    transition: transform 0.15s ease;
+}
+
+.links a:hover .arrow {
+    transform: translateX(3px);
+}
+
+/* ─── Entries (Experience, Projects, Education) ─── */
+.entries {
+    list-style: none;
+}
+
+.entries>li {
+    padding: 1.35rem 1.15rem;
+    margin: 0 -1.15rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+    cursor: default;
+}
+
+.entries>li+li {
+    margin-top: 0.5rem;
+}
+
+.entries>li:hover {
+    background-color: var(--hover-bg);
+}
+
+.entries>li:hover .entry-title:not(a):not(.text-link) {
+    text-decoration: underline;
+    text-decoration-color: var(--text);
+    text-underline-offset: 3px;
+}
+
+.entries.compact>li {
+    padding: 0.85rem 1.15rem;
+}
+
+ul.entry-list {
+    list-style: disc;
+    margin-top: 0.5rem;
+    padding-left: 1.2rem;
+}
+
+ul.entry-list li {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-top: 0.25rem;
+    text-wrap: pretty;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.35rem;
+}
+
+.entries.compact .entry-header {
+    margin-bottom: 0;
+}
+
+.entry-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+/* Project links: Highlighted like contact links before hover, take theme background on hover */
+a.entry-title,
+.entry-title.text-link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2.5px;
+    text-decoration-thickness: 1px;
+    display: inline-block;
+    padding: 0.05rem 0.25rem;
+    margin: -0.05rem -0.25rem;
+    border-radius: 2px;
+    transition: color 0.12s ease-out, background-color 0.12s ease-out;
+}
+
+a.entry-title:hover,
+.entry-title.text-link:hover {
+    background-color: var(--link-hover-bg);
+    color: var(--link-hover-text);
+    text-decoration: none;
+}
+
+.entry-meta {
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.entries p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-top: 0.35rem;
+    text-wrap: pretty;
+}
+
+/* ─── Skills Section (Grey Boxes + Unified Hover Background) ─── */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* The Category Card: Uses the exact same hover-bg as projects, experience, and education */
+.skill-category-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.skill-category-card:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--border-hover);
+}
+
+.skill-category-header {
+    margin-bottom: 0.9rem;
+}
+
+.skill-category-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+/* Individual Skill Tag: Crisp Interactive Grey Box Badge with Monochrome Inversion on Hover */
+.skill-tag {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.4;
+    padding: 0.3rem 0.65rem;
+    background-color: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 5px;
+    color: var(--tag-text);
+    transition: all 0.16s ease-out;
+    cursor: default;
+    user-select: none;
+    display: inline-block;
+}
+
+.skill-tag:hover {
+    background-color: var(--tag-hover-bg);
+    border-color: var(--tag-hover-border);
+    color: var(--tag-hover-text);
+    transform: translateY(-2px);
+    box-shadow: var(--tag-hover-shadow);
+}
+
+/* ─── Footer ─── */
+footer {
+    margin-top: 6rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+
+footer small {
+    color: var(--text-tertiary);
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+}
+
+/* ─── Responsive Adjustments ─── */
+@media (max-width: 640px) {
+    .page {
+        padding: 4rem 1.25rem 5rem;
+    }
+
+    .header-container {
+        margin-bottom: 4rem;
+    }
+
+    section {
+        margin-top: 4rem;
+    }
+
+    .entry-header {
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .entries>li {
+        padding: 1.2rem 0.75rem;
+        margin: 0 -0.75rem;
+    }
+
+    .links {
+        gap: 1rem;
+    }
 }
